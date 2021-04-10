@@ -1,0 +1,22 @@
+name: 'Smart Deploy Kubernetes Action'
+description: 'Deploy changes via helm, update DNS'
+inputs:
+  release:
+    description: 'Helm release'
+    required: true
+  chart:
+    description: 'Helm chart'
+    required: true
+  appVersion:
+    description: 'Helm chart appVersion'
+    required: true
+outputs:
+  time: # id of output
+    description: 'The time we greeted you'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.release }}
+    - ${{ inputs.chart }}
+    - ${{ inputs.appVersion }}

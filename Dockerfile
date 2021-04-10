@@ -1,10 +1,5 @@
-FROM scratch
-
-COPY ./deploy /usr/src/app/
-
-# Use an unprivileged user.
-USER appuser
+FROM golang:1.15.5-alpine3.12
 WORKDIR /usr/src/app
-
-# Run binary.
-ENTRYPOINT ["/usr/src/app/deploy"]
+COPY . /usr/src/app/
+RUN go mod download
+ENTRYPOINT ["go", "run", "/usr/src/app/main.go"]
