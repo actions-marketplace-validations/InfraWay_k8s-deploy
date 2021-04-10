@@ -28,7 +28,7 @@ func main() {
 		log.Fatalf("Command finished with error: %v", err)
 	}
 
-	err = ans.TrackDeploy(tools.Github, "plyo", "mazahaca")
+	err = ans.TrackDeploy(getDataSource(), "plyo", "mazahaca")
 	if err != nil {
 		log.Print(err)
 	}
@@ -43,4 +43,11 @@ func main() {
 	//if err != nil {
 	//	log.Printf("Analytics finished with error: %v", err)
 	//}
+}
+
+func getDataSource() tools.DataSource {
+	if test := os.Getenv("GITHUB_ACTIONS"); test != "" {
+		return tools.Github
+	}
+	return tools.Gitlab
 }
