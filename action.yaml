@@ -1,5 +1,7 @@
 name: 'Smart Deploy Kubernetes Action'
 description: 'Deploy changes via helm, update DNS'
+author: "InfraWay"
+
 inputs:
   release:
     description: 'Helm release'
@@ -20,3 +22,7 @@ runs:
     - ${{ inputs.release }}
     - ${{ inputs.chart }}
     - ${{ inputs.appVersion }}
+
+branding:
+  icon: "anchor"
+  color: "blue"
