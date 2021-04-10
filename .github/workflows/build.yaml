@@ -47,6 +47,13 @@ jobs:
           go vet .
           golint .
 
+      - name: Publish Docker image
+        run: |
+          export TAG=${GITHUB_SHA:0:7}
+          export REGISTRY_IMAGE="docker.pkg.github.com/$(echo $GITHUB_REPOSITORY | awk '{print tolower($0)}')/web"
+          docker build -t $REGISTRY_IMAGE:$TAG .
+          docker push $REGISTRY_IMAGE:$TAG
+
 #      # Run testing on the code
 #      - name: Run testing
 #        run: cd test && go test -v
