@@ -52,6 +52,7 @@ func main() {
 			"--set", fmt.Sprintf("image.tag=%s", os.Getenv("DEPLOY_TAG")),
 			"--set", fmt.Sprintf("ingress.baseHost=%s", host),
 		)
+		log.Print(cmd.String())
 	} else {
 		cmd = exec.Command("helm", "uninstall", release)
 	}

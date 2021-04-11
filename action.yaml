@@ -15,9 +15,6 @@ inputs:
   chart:
     description: 'Helm chart'
     required: true
-  version:
-    description: 'Helm chart appVersion'
-    required: true
   host:
     description: 'Host for deployment'
     required: true
@@ -33,7 +30,6 @@ runs:
     - ${{ inputs.namespace }}
     - ${{ inputs.release }}
     - ${{ inputs.chart }}
-    - ${{ inputs.version }}
     - ${{ inputs.host }}
     - ${{ inputs.ip }}
 
