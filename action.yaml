@@ -3,25 +3,39 @@ description: 'Deploy changes via helm, update DNS'
 author: "InfraWay"
 
 inputs:
+  action:
+    description: 'Action to do rollout|delete'
+    required: true
+  namespace:
+    description: 'Kubernetes namespace'
+    required: true
   release:
     description: 'Helm release'
     required: true
   chart:
     description: 'Helm chart'
     required: true
-  appVersion:
+  version:
     description: 'Helm chart appVersion'
     required: true
-outputs:
-  time: # id of output
-    description: 'The time we greeted you'
+  host:
+    description: 'Host for deployment'
+    required: true
+  ip:
+    description: 'Ip for deployment'
+    required: true
+
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
+    - ${{ inputs.action }}
+    - ${{ inputs.namespace }}
     - ${{ inputs.release }}
     - ${{ inputs.chart }}
-    - ${{ inputs.appVersion }}
+    - ${{ inputs.version }}
+    - ${{ inputs.host }}
+    - ${{ inputs.ip }}
 
 branding:
   icon: "anchor"

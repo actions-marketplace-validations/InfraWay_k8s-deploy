@@ -28,23 +28,34 @@ type CloudflareProvider struct {
 }
 
 func (c CloudflareProvider) AddRecord(record string, ip string) error {
-	r := cloudflare.DNSRecord{Name: record, Content: ip}
-	_, err := c.API.CreateDNSRecord(context.Background(), c.ZoneId, r)
+	r, err := c.getRecord(record)
+	if r != nil || err != nil {
+		return err
+	}
+
+	rec := cloudflare.DNSRecord{Name: record, Content: ip}
+	_, err = c.API.CreateDNSRecord(context.Background(), c.ZoneId, rec)
 
 	return err
 }
 
 func (c CloudflareProvider) RemoveRecord(record string, ip string) error {
-	filter := cloudflare.DNSRecord{Name: record}
-	recs, err := c.API.DNSRecords(context.Background(), c.ZoneId, filter)
+	r, err := c.getRecord(record)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if len(recs) == 0 {
-		return nil
-	}
 
-	return err
+	return c.API.DeleteDNSRecord(context.Background(), c.ZoneId, r.ID)
+}
+
+func (c CloudflareProvider) getRecord(record string) (r *cloudflare.DNSRecord, err error) {
+	filter := cloudflare.DNSRecord{Name: record}
+	recs, err := c.API.DNSRecords(context.Background(), c.ZoneId, filter)
+	if len(recs) == 0 || err != nil {
+		return nil, err
+	}
+	r = &recs[0]
+	return r, err
 }
 
 func NewDnsProvider() (IDnsProvider, error) {

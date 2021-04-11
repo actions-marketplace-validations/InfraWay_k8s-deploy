@@ -52,6 +52,10 @@ func (a analytics) TrackRollout(dataSource DataSource, customer string, user str
 	return a.trackEvent(dataSource, customer, user, CategoryDeploy, ActionDeploymentRollback)
 }
 
+func (a analytics) TrackDelete(dataSource DataSource, customer string, user string) error {
+	return a.trackEvent(dataSource, customer, user, CategoryDeploy, ActionDeploymentDelete)
+}
+
 func (a analytics) TrackPullRequest(dataSource DataSource, customer string, user string, prAction Action) error {
 	return a.trackEvent(dataSource, customer, user, CategoryPullRequest, prAction)
 }
