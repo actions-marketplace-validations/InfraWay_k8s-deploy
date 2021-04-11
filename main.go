@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 
 	"deploy/tools"
 )
@@ -60,13 +61,18 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+		path, err := filepath.Abs(filepath.Dir(file.Name()))
+		fName := filepath.Base(file.Name())
+		if err != nil {
+			log.Fatal(err)
+		}
 		_, err = file.Write([]byte(kubeConfig))
 		if err != nil {
 			log.Fatal(err)
 		}
 		defer os.Remove(file.Name())
 		cmd.Env = append(os.Environ(),
-			fmt.Sprintf("KUBECONFIG=%s", file.Name()),
+			fmt.Sprintf("KUBECONFIG=%s", fmt.Sprintf("%s/%s", path, fName)),
 		)
 	}
 	cmd.Stdout = os.Stdout
