@@ -33,7 +33,8 @@ func (c CloudflareProvider) AddRecord(record string, ip string) error {
 		return err
 	}
 
-	rec := cloudflare.DNSRecord{Name: record, Content: ip}
+	proxied := true
+	rec := cloudflare.DNSRecord{Type: "A", Name: record, Content: ip, Proxied: &proxied, ZoneID: c.ZoneId}
 	_, err = c.API.CreateDNSRecord(context.Background(), c.ZoneId, rec)
 
 	return err
@@ -49,7 +50,7 @@ func (c CloudflareProvider) RemoveRecord(record string, ip string) error {
 }
 
 func (c CloudflareProvider) getRecord(record string) (r *cloudflare.DNSRecord, err error) {
-	filter := cloudflare.DNSRecord{Name: record}
+	filter := cloudflare.DNSRecord{Name: record, ZoneID: c.ZoneId}
 	recs, err := c.API.DNSRecords(context.Background(), c.ZoneId, filter)
 	if len(recs) == 0 || err != nil {
 		return nil, err
@@ -60,10 +61,9 @@ func (c CloudflareProvider) getRecord(record string) (r *cloudflare.DNSRecord, e
 
 func NewDnsProvider() (IDnsProvider, error) {
 	cloudflareToken := os.Getenv("CF_TOKEN")
-	cloudflareAccount := os.Getenv("CF_ACCOUNT_EMAIL")
 	cloudflareZone := os.Getenv("CF_ZONE_ID")
-	if cloudflareToken != "" && cloudflareAccount != "" && cloudflareZone != "" {
-		api, err := cloudflare.New(cloudflareToken, cloudflareAccount)
+	if cloudflareToken != "" && cloudflareZone != "" {
+		api, err := cloudflare.NewWithAPIToken(cloudflareToken)
 		if err != nil {
 			log.Fatal(err)
 		}
