@@ -56,7 +56,7 @@ func main() {
 	} else {
 		cmd = exec.Command("helm", "uninstall", release)
 	}
-	if kubeConfig := os.Getenv("KUBE_CONFIG"); kubeConfig != "" {
+	if kubeConfig := os.Getenv("KUBECONFIG_ENV"); kubeConfig != "" {
 		file, err := ioutil.TempFile("", "config")
 		if err != nil {
 			log.Fatal(err)
@@ -68,6 +68,11 @@ func main() {
 		defer os.Remove(file.Name())
 		cmd.Env = append(os.Environ(),
 			fmt.Sprintf("KUBECONFIG=%s", file.Name()),
+		)
+	}
+	if kubeConfig := os.Getenv("KUBECONFIG"); kubeConfig != "" {
+		cmd.Env = append(os.Environ(),
+			fmt.Sprintf("KUBECONFIG=%s", kubeConfig),
 		)
 	}
 	cmd.Stdout = os.Stdout
