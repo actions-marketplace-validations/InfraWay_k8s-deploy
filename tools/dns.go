@@ -42,9 +42,10 @@ func (c CloudflareProvider) AddRecord(record string, ip string) error {
 
 func (c CloudflareProvider) RemoveRecord(record string, ip string) error {
 	r, err := c.getRecord(record)
-	if err != nil {
-		log.Fatal(err)
+	if r == nil || err != nil {
+		return err
 	}
+	log.Printf("DNS record found for deletion %v", r)
 
 	return c.API.DeleteDNSRecord(context.Background(), c.ZoneId, r.ID)
 }

@@ -51,6 +51,7 @@ func main() {
 			chart,
 			"--set", fmt.Sprintf("image.tag=%s", os.Getenv("DEPLOY_TAG")),
 			"--set", fmt.Sprintf("ingress.baseHost=%s", host),
+			"--timeout", "10m",
 		)
 		log.Print(cmd.String())
 	} else {
@@ -91,13 +92,13 @@ func main() {
 	if action == ActionDeploy {
 		err = dns.AddRecord(host, ip)
 		if err != nil {
-			log.Print(err)
+			log.Fatal(err)
 		}
 	}
 	if action == ActionDelete {
 		err = dns.RemoveRecord(host, ip)
 		if err != nil {
-			log.Print(err)
+			log.Fatal(err)
 		}
 	}
 
