@@ -51,7 +51,7 @@ func main() {
 			chart,
 			"--set", fmt.Sprintf("image.tag=%s", os.Getenv("DEPLOY_TAG")),
 			"--set", fmt.Sprintf("ingress.baseHost=%s", host),
-			"--timeout", "10m",
+			"--timeout", "20m",
 		)
 		log.Print(cmd.String())
 	} else {
