@@ -42,7 +42,7 @@ func main() {
 
 	var cmd *exec.Cmd
 	if action == ActionDeploy {
-		cmd = exec.Command("helm",
+		args := []string{
 			"upgrade",
 			"-n", namespace,
 			"--install",
@@ -52,7 +52,14 @@ func main() {
 			"--set", fmt.Sprintf("image.tag=%s", os.Getenv("DEPLOY_TAG")),
 			"--set", fmt.Sprintf("ingress.baseHost=%s", host),
 			"--timeout", "20m",
-		)
+		}
+		if v := os.Getenv("HELM_VALUES"); v != "" {
+			args = append(args, fmt.Sprintf("--values=%s", v))
+		}
+		if v := os.Getenv("HELM_FULLNAME_OVERRIDE"); v != "" {
+			args = append(args, "--set", fmt.Sprintf("fullnameOverride=%s", v))
+		}
+		cmd = exec.Command("helm", args...)
 		log.Print(cmd.String())
 	} else {
 		cmd = exec.Command("helm", "uninstall", release)
