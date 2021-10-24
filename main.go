@@ -19,6 +19,7 @@ var (
 	namespace string
 	release   string
 	chart     string
+	host      string
 )
 
 func init() {
@@ -27,6 +28,7 @@ func init() {
 	namespace = flag.Arg(1)
 	release = flag.Arg(2)
 	chart = flag.Arg(3)
+	host = flag.Arg(4)
 }
 
 func main() {
@@ -49,6 +51,9 @@ func main() {
 		}
 		if v := os.Getenv("HELM_FULLNAME_OVERRIDE"); v != "" {
 			args = append(args, "--set", fmt.Sprintf("fullnameOverride=%s", v))
+		}
+		if host != "" {
+			args = append(args, "--set", fmt.Sprintf("ingress.baseHost=%s", host))
 		}
 		cmd = exec.Command("helm", args...)
 		log.Print(cmd.String())

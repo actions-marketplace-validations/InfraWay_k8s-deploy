@@ -16,11 +16,8 @@ inputs:
     description: 'Helm chart'
     required: true
   host:
-    description: 'Host for deployment'
-    required: true
-  ip:
-    description: 'Ip for deployment'
-    required: true
+    description: 'Host of deployment'
+    required: false
 
 runs:
   using: 'docker'
@@ -31,7 +28,6 @@ runs:
     - ${{ inputs.release }}
     - ${{ inputs.chart }}
     - ${{ inputs.host }}
-    - ${{ inputs.ip }}
 
 branding:
   icon: "anchor"
