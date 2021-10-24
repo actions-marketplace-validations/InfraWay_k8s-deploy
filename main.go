@@ -19,8 +19,6 @@ var (
 	namespace string
 	release   string
 	chart     string
-	host      string
-	ip        string
 )
 
 func init() {
@@ -29,16 +27,10 @@ func init() {
 	namespace = flag.Arg(1)
 	release = flag.Arg(2)
 	chart = flag.Arg(3)
-	host = flag.Arg(4)
-	ip = flag.Arg(5)
 }
 
 func main() {
 	ans := tools.NewAnalytics()
-	dns, err := tools.NewDnsProvider()
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	var cmd *exec.Cmd
 	if action == ActionDeploy {
@@ -50,7 +42,6 @@ func main() {
 			release,
 			chart,
 			"--set", fmt.Sprintf("image.tag=%s", os.Getenv("DEPLOY_TAG")),
-			"--set", fmt.Sprintf("ingress.baseHost=%s", host),
 			"--timeout", "20m",
 		}
 		if v := os.Getenv("HELM_VALUES"); v != "" {
@@ -86,7 +77,7 @@ func main() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
-	err = cmd.Start()
+	err := cmd.Start()
 	if err != nil {
 		log.Fatalf("Command started with error: %v", err)
 	}
@@ -94,19 +85,6 @@ func main() {
 	if err != nil {
 		_ = ans.TrackRollout(getDataSource(), getRepoOwner(), getActor())
 		log.Fatalf("Command finished with error: %v", err)
-	}
-
-	if action == ActionDeploy {
-		err = dns.AddRecord(host, ip)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-	if action == ActionDelete {
-		err = dns.RemoveRecord(host, ip)
-		if err != nil {
-			log.Fatal(err)
-		}
 	}
 
 	_ = ans.TrackDeploy(getDataSource(), getRepoOwner(), getActor())
